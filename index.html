@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="description" content="সামসুল'স গ্রোসারি - বদলগাছীর বিশ্বস্ত অনলাইন গ্রোসারি শপ" />
+  <title>সামসুল'স গ্রোসারি</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <noscript>আপনাকে এই অ্যাপটি চালাতে JavaScript সক্ষম করতে হবে।</noscript>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    const G = () => `${Date.now()}-${Math.random().toString(36).slice(2,5)}`;
+
+    const PRODS = [
+      {id:'prod-001',n:'মিনিকেট চাল (১ কেজি)',p:68,u:'কেজি',c:'চাল',img:'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300&q=70',stock:100,hot:true},
+      {id:'prod-002',n:'বাসমতি চাল (१ কেজি)',p:95,u:'কেজি',c:'চাল',img:'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=300&q=70',stock:60,hot:false},
+      {id:'prod-003',n:'সয়াবিন তেল (२ লিটার)',p:380,u:'বোতল',c:'তেল',img:'https://images.unsplash.com/photo-1620706859477-e4abc8a7b2a7?w=300&q=70',stock:50,hot:true},
+      {id:'prod-004',n:'সরিষার তেল (१ লিটার)',p:220,u:'বোতল',c:'তেল',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&q=70',stock:40,hot:false},
+      {id:'prod-005',n:'দেশি আলু (१ কেজি)',p:55,u:'কেজি',c:'সবজি',img:'https://images.unsplash.com/photo-1518977676601-b53f02bad67b?w=300&q=70',stock:200,hot:true},
+      {id:'prod-006',n:'টমেটো (१ কেজি)',p:80,u:'কেজি',c:'সবজি',img:'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=300&q=70',stock:80,hot:false},
+      {id:'prod-007',n:'পেঁয়াজ (१ কেজি)',p:60,u:'কেজি',c:'সবজি',img:'https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?w=300&q=70',stock:150,hot:false},
+      {id:'prod-008',n:'সবরি কলা (१ ডজন)',p:120,u:'ডজন',c:'ফল',img:'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=300&q=70',stock:30,hot:true},
+      {id:'prod-009',n:'আম – রাজশাহী (१ কেজি)',p:150,u:'কেজি',c:'ফল',img:'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=300&q=70',stock:6,hot:false},
+      {id:'prod-010',n:'চানাচুর (१५० গ্রাম)',p:45,u:'প্যাকেট',c:'নাস্তা',img:'https://images.unsplash.com/photo-1601050690597-df056fb46b45?w=300&q=70',stock:100,hot:false},
+      {id:'prod-011',n:'কোকা-কোলা (५००० মিলি)',p:40,u:'বোতল',c:'পানীয়',img:'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300&q=70',stock:0,hot:false},
+      {id:'prod-012',n:'ডেটল সাবান',p:55,u:'পিস',c:'গৃহস্থালি',img:'https://images.unsplash.com/photo-1584515933487-779824d29309?w=300&q=70',stock:60,hot:false},
+      {id:'prod-013',n:'মসুর ডাল (१ কেজি)',p:140,u:'কেজি',c:'ডাল',img:'https://images.unsplash.com/photo-1599599810694-7bf1cfb70fce?w=300&q=70',stock:75,hot:true},
+      {id:'prod-014',n:'মুং ডাল (१ কেজি)',p:155,u:'কেজি',c:'ডাল',img:'https://images.unsplash.com/photo-1585435557529-0dd9f9ef4dce?w=300&q=70',stock:45,hot:false},
+    ];
+
+    const CATS = ['সব','চাল','তেল','সবজি','ফল','নাস্তা','পানীয়','গৃহস্থালি','ডাল'];
+
+    const formatDate = (iso) => { 
+      const d = new Date(iso); 
+      return d.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' }); 
+    };
+
+    const isValidPhone = (phone) => /^01\d{9}$/.test(phone.replace(/[-\s]/g, ''));
+
+    function App() {
+      const [view, setView] = useState('STORE');
+      const [prods, setProds] = useState(PRODS);
+      const [cart, setCart] = useState([]);
+      const [adminAuth, setAdminAuth] = useState(false);
+      const [adminPw, setAdminPw] = useState('');
+      const [placing, setPlacing] = useState(false);
+      const [chkForm, setChkForm] = useState({name:'',phone:'',addr:''});
+      const [toast, setToast] = useState(null);
+      const [selCat, setSelCat] = useState('সব');
+      const [orders, setOrders] = useState([]);
+
+      const showToast = (msg, type='ok') => {
+        setToast({msg, type});
+        setTimeout(() => setToast(null), 2800);
+      };
+
+      const addToCart = (prod) => {
+        const prodData = prods.find(p => p.id === prod.id);
+        if (!prodData || prodData.stock <= 0) {
+          showToast('স্টকে পণ্য নেই!', 'w');
+          return;
+        }
+        setCart(prev => {
+          const ex = prev.find(i => i.id === prod.id);
+          const currentQty = ex ? ex.qty : 0;
+          if (currentQty + 1 > prodData.stock) {
+            showToast(`সর্বোচ্চ ${prodData.stock}টি কিনতে পারবেন!`, 'w');
+            return prev;
+          }
+          return ex ? prev.map(i => i.id===prod.id ? {...i, qty:i.qty+1} : i) : [...prev, {...prod, qty:1}];
+        });
+        showToast(`${prod.n} ব্যাগে যুক্ত!`);
+      };
+
+      const removeFromCart = (id) => {
+        setCart(prev => prev.filter(i => i.id !== id));
+        showToast('পণ্য অপসারিত');
+      };
+
+      const updateQty = (id, qty) => {
+        if (qty <= 0) { removeFromCart(id); return; }
+        const prod = prods.find(p => p.id === id);
+        if (qty > prod.stock) {
+          showToast(`সর্বোচ্চ ${prod.stock}টি!`, 'w');
+          return;
+        }
+        setCart(prev => prev.map(i => i.id===id ? {...i, qty} : i));
+      };
+
+      const cartTotal = cart.reduce((s, i) => s + i.p*i.qty, 0);
+
+      const logoutAdmin = () => {
+        setAdminAuth(false);
+        setAdminPw('');
+      };
+
+      const placeOrder = async (e) => {
+        e.preventDefault();
+        if (!chkForm.name.trim()) {
+          showToast('দয়া করে নাম দিন!', 'w');
+          return;
+        }
+        if (!isValidPhone(chkForm.phone)) {
+          showToast('বৈধ মোবাইল নম্বর দিন! (01XXXXXXXXX)', 'w');
+          return;
+        }
+        if (!chkForm.addr.trim()) {
+          showToast('দয়া করে ঠিকানা দিন!', 'w');
+          return;
+        }
+        if (cart.length === 0) {
+          showToast('কার্টে কোনো পণ্য নেই!', 'w');
+          return;
+        }
+
+        setPlacing(true);
+        await new Promise(r => setTimeout(r, 700));
+
+        const order = {
+          id: G(),
+          date: new Date().toISOString(),
+          name: chkForm.name,
+          phone: chkForm.phone,
+          addr: chkForm.addr,
+          items: cart,
+          total: cartTotal
+        };
+
+        setOrders(prev => [...prev, order]);
+        setCart([]);
+        setChkForm({name:'',phone:'',addr:''});
+        setPlacing(false);
+        showToast('অর্ডার সফল!');
+        setView('STORE');
+      };
+
+      const filtProds = selCat === 'সব' ? prods : prods.filter(p => p.c === selCat);
+
+      return (
+        <div style={{fontFamily:'Noto Sans Bengali, sans-serif', minHeight:'100vh', background:'#f5f7f5'}}>
+          {toast && <div style={{position:'fixed', bottom:20, left:'50%', transform:'translateX(-50%)', zIndex:9999, background:toast.type==='ok'?'#059669':'#d97706', color:'white', padding:'12px 24px', borderRadius:99, boxShadow:'0 4px 12px rgba(0,0,0,.15)'}}>{toast.msg}</div>}
+
+          <header style={{background:'white', padding:'16px 20px', boxShadow:'0 2px 8px rgba(0,0,0,.1)', marginBottom:'20px'}}>
+            <div style={{maxWidth:1200, margin:'0 auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <h1 style={{fontSize:'24px', fontWeight:'900', color:'#065f46'}}>🛒 সামসুল'স গ্রোসরি</h1>
+              <div style={{display:'flex', gap:'12px'}}>
+                <button onClick={()=>setView('STORE')} style={{padding:'10px 16px', borderRadius:'8px', border:'none', background:view==='STORE'?'#059669':'white', color:view==='STORE'?'white':'#065f46', cursor:'pointer', fontWeight:'700'}}>স্টোর</button>
+                <button onClick={()=>setView('ADMIN')} style={{padding:'10px 16px', borderRadius:'8px', border:'none', background:view==='ADMIN'?'#059669':'white', color:view==='ADMIN'?'white':'#065f46', cursor:'pointer', fontWeight:'700'}}>অ্যাডমিন</button>
+                <button onClick={()=>setView('CHECKOUT')} style={{padding:'10px 16px', borderRadius:'8px', border:'none', background:view==='CHECKOUT'?'#059669':'white', color:view==='CHECKOUT'?'white':'#065f46', cursor:'pointer', fontWeight:'700'}}>চেকআউট ({cart.length})</button>
+              </div>
+            </div>
+          </header>
+
+          <main style={{maxWidth:1200, margin:'0 auto', padding:'20px'}}>
+            {view==='STORE' && <div>
+              <h2 style={{marginBottom:'16px', color:'#065f46'}}>পণ্যসমূহ</h2>
+              <div style={{display:'flex', gap:'8px', marginBottom:'20px', flexWrap:'wrap'}}>
+                {CATS.map(cat => (
+                  <button key={cat} onClick={()=>setSelCat(cat)} style={{padding:'8px 16px', borderRadius:'6px', border:'none', background:selCat===cat?'#059669':'#e0e0e0', color:selCat===cat?'white':'#333', cursor:'pointer', fontWeight:'600'}}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'16px', marginTop:'16px'}}>
+                {filtProds.map(p => (
+                  <div key={p.id} style={{background:'white', padding:'16px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)', position:'relative'}}>
+                    {p.hot && <div style={{position:'absolute', top:'12px', right:'12px', background:'#dc2626', color:'white', padding:'4px 8px', borderRadius:'4px', fontSize:'12px', fontWeight:'700'}}>🔥 হট</div>}
+                    <img src={p.img} alt={p.n} style={{width:'100%', height:'150px', objectFit:'cover', borderRadius:'8px', marginBottom:'12px'}} />
+                    <h3 style={{fontSize:'14px', fontWeight:'700', marginBottom:'8px', minHeight:'40px'}}>{p.n}</h3>
+                    <p style={{fontSize:'16px', fontWeight:'900', color:'#059669', marginBottom:'8px'}}>৳{p.p}</p>
+                    <p style={{fontSize:'12px', color:'#6b7280', marginBottom:'12px'}}>স্টক: {p.stock} {p.u}</p>
+                    <button onClick={()=>addToCart(p)} disabled={p.stock===0} style={{width:'100%', padding:'10px', background:p.stock===0?'#ccc':'#059669', color:'white', border:'none', borderRadius:'8px', cursor:p.stock===0?'not-allowed':'pointer', fontWeight:'700'}}>
+                      {p.stock===0?'স্টক শেষ':'যোগ করুন'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>}
+
+            {view==='CHECKOUT' && <div style={{maxWidth:'600px'}}>
+              <h2 style={{marginBottom:'20px', color:'#065f46'}}>চেকআউট</h2>
+              {cart.length === 0 ? (
+                <p style={{color:'#666', fontSize:'16px'}}>আপনার কার্ট খালি। পণ্য যোগ করুন!</p>
+              ) : (
+                <>
+                  <div style={{background:'white', padding:'16px', borderRadius:'12px', marginBottom:'20px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                    <h3 style={{marginBottom:'12px', color:'#065f46'}}>আপনার অর্ডার</h3>
+                    {cart.map(item => (
+                      <div key={item.id} style={{display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #eee', alignItems:'center'}}>
+                        <div>
+                          <p style={{fontWeight:'600'}}>{item.n}</p>
+                          <p style={{fontSize:'12px', color:'#666'}}>৳{item.p} x {item.qty}</p>
+                        </div>
+                        <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
+                          <p style={{fontWeight:'700', minWidth:'60px'}}>৳{item.p*item.qty}</p>
+                          <button onClick={()=>updateQty(item.id, item.qty-1)} style={{padding:'4px 8px', background:'#f0f0f0', border:'none', borderRadius:'4px', cursor:'pointer'}}>-</button>
+                          <span style={{minWidth:'20px', textAlign:'center'}}>{item.qty}</span>
+                          <button onClick={()=>updateQty(item.id, item.qty+1)} style={{padding:'4px 8px', background:'#f0f0f0', border:'none', borderRadius:'4px', cursor:'pointer'}}>+</button>
+                          <button onClick={()=>removeFromCart(item.id)} style={{padding:'4px 8px', background:'#fee2e2', border:'none', borderRadius:'4px', cursor:'pointer', color:'#dc2626'}}>মুছুন</button>
+                        </div>
+                      </div>
+                    ))}
+                    <div style={{borderTop:'2px solid #059669', paddingTop:'12px', marginTop:'12px', display:'flex', justifyContent:'space-between', fontWeight:'900', fontSize:'16px', color:'#059669'}}>
+                      <span>মোট:</span>
+                      <span>৳{cartTotal}</span>
+                    </div>
+                  </div>
+
+                  <form onSubmit={placeOrder} style={{display:'flex', flexDirection:'column', gap:'12px', background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                    <input required type="text" value={chkForm.name} onChange={e=>setChkForm({...chkForm, name:e.target.value})} placeholder="আপনার নাম" style={{padding:'12px', borderRadius:'8px', border:'1px solid #e0e0e0', fontSize:'14px'}} />
+                    <input required type="tel" value={chkForm.phone} onChange={e=>setChkForm({...chkForm, phone:e.target.value})} placeholder="মোবাইল নম্বর (01XXXXXXXXX)" style={{padding:'12px', borderRadius:'8px', border:'1px solid #e0e0e0', fontSize:'14px'}} />
+                    <textarea required value={chkForm.addr} onChange={e=>setChkForm({...chkForm, addr:e.target.value})} placeholder="ডেলিভারি ঠিকানা" rows="3" style={{padding:'12px', borderRadius:'8px', border:'1px solid #e0e0e0', fontSize:'14px', fontFamily:'inherit'}} />
+                    <button type="submit" disabled={placing} style={{padding:'12px', background:'#059669', color:'white', border:'none', borderRadius:'8px', fontWeight:'700', cursor:'pointer', fontSize:'16px'}}>
+                      {placing?'প্রক্রিয়া করছে...':'অর্ডার নিশ্চিত করুন'}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>}
+
+            {view==='ADMIN' && <div style={{maxWidth:'100%'}}>
+              <h2 style={{marginBottom:'20px', color:'#065f46'}}>অ্যাডমিন প্যানেল</h2>
+              {!adminAuth ? (
+                <form onSubmit={(e) => {e.preventDefault(); if(adminPw==='admin123'){setAdminAuth(true); showToast('লগইন সফল!');} else {showToast('ভুল পাসওয়ার্ড!', 'w');}}} style={{display:'flex', flexDirection:'column', gap:'12px', background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)', maxWidth:'400px'}}>
+                  <input type="password" value={adminPw} onChange={e=>setAdminPw(e.target.value)} placeholder="পাসওয়ার্ড" style={{padding:'12px', borderRadius:'8px', border:'1px solid #e0e0e0', fontSize:'14px'}} />
+                  <button type="submit" style={{padding:'12px', background:'#059669', color:'white', border:'none', borderRadius:'8px', fontWeight:'700', cursor:'pointer'}}>লগইন</button>
+                </form>
+              ) : (
+                <>
+                  <AdminDashboard orders={orders} prods={prods} setProds={setProds} formatDate={formatDate} logoutAdmin={logoutAdmin} />
+                </>
+              )}
+            </div>}
+          </main>
+
+          {adminAuth && (
+            <AdminDashboardComponent orders={orders} prods={prods} setProds={setProds} formatDate={formatDate} logoutAdmin={logoutAdmin} />
+          )}
+        </div>
+      );
+    }
+
+    function StatCard({title, value, icon, color = '#059669'}) {
+      return (
+        <div style={{background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)', textAlign:'center'}}>
+          <div style={{fontSize:'32px', marginBottom:'12px'}}>{icon}</div>
+          <h4 style={{margin:'0 0 8px 0', color:'#666', fontSize:'13px', fontWeight:'600'}}>{title}</h4>
+          <p style={{margin:'0', fontSize:'24px', fontWeight:'900', color:color}}>{value}</p>
+        </div>
+      );
+    }
+
+    function AdminDashboard({orders, prods, setProds, formatDate, logoutAdmin}) {
+      const [adminTab, setAdminTab] = useState('DASHBOARD');
+      const [editingProd, setEditingProd] = useState(null);
+      const [newProdForm, setNewProdForm] = useState({n:'',p:'',c:'',stock:0,u:''});
+      const [filterStatus, setFilterStatus] = useState('all');
+      const [lowStockThreshold, setLowStockThreshold] = useState(20);
+
+      const totalOrders = orders.length;
+      const totalRevenue = orders.reduce((s,o) => s + o.total, 0);
+      const totalProducts = prods.length;
+      const lowStockProducts = prods.filter(p => p.stock <= lowStockThreshold);
+      const outOfStockProducts = prods.filter(p => p.stock === 0);
+
+      const updateProduct = (prodId, updates) => {
+        setProds(prods.map(p => p.id === prodId ? {...p, ...updates} : p));
+      };
+
+      const deleteProduct = (prodId) => {
+        if(confirm('এই পণ্যটি মুছে ফেলবেন?')) {
+          setProds(prods.filter(p => p.id !== prodId));
+        }
+      };
+
+      const addNewProduct = () => {
+        if(!newProdForm.n.trim() || !newProdForm.p || !newProdForm.c || !newProdForm.u.trim()) {
+          alert('সব তথ্য পূরণ করুন!');
+          return;
+        }
+        const newProd = {
+          id: `prod-${Date.now()}`,
+          n: newProdForm.n,
+          p: parseInt(newProdForm.p),
+          c: newProdForm.c,
+          stock: parseInt(newProdForm.stock) || 0,
+          u: newProdForm.u,
+          img: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=300&q=70',
+          hot: false
+        };
+        setProds([...prods, newProd]);
+        setNewProdForm({n:'',p:'',c:'',stock:0,u:''});
+        alert('পণ্য যোগ করা হয়েছে!');
+      };
+
+      return (
+        <div style={{display:'grid', gridTemplateColumns:'1fr 4fr', gap:'20px', marginBottom:'40px'}}>
+          <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+            <button onClick={()=>setAdminTab('DASHBOARD')} style={{padding:'12px', background:adminTab==='DASHBOARD'?'#059669':'white', color:adminTab==='DASHBOARD'?'white':'#065f46', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left'}}>📊 ড্যাশবোর্ড</button>
+            <button onClick={()=>setAdminTab('ORDERS')} style={{padding:'12px', background:adminTab==='ORDERS'?'#059669':'white', color:adminTab==='ORDERS'?'white':'#065f46', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left'}}>📋 অর্ডার ব্যবস্থাপনা</button>
+            <button onClick={()=>setAdminTab('INVENTORY')} style={{padding:'12px', background:adminTab==='INVENTORY'?'#059669':'white', color:adminTab==='INVENTORY'?'white':'#065f46', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left'}}>📦 ইনভেন্টরি</button>
+            <button onClick={()=>setAdminTab('STOCK')} style={{padding:'12px', background:adminTab==='STOCK'?'#059669':'white', color:adminTab==='STOCK'?'white':'#065f46', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left'}}>🏪 স্টক ব্যবস্থাপনা</button>
+            <button onClick={()=>setAdminTab('PRODUCTS')} style={{padding:'12px', background:adminTab==='PRODUCTS'?'#059669':'white', color:adminTab==='PRODUCTS'?'white':'#065f46', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left'}}>🛍️ পণ্য সম্পাদনা</button>
+            <button onClick={logoutAdmin} style={{padding:'12px', background:'#dc2626', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700', textAlign:'left', marginTop:'auto'}}>🚪 লগআউট</button>
+          </div>
+
+          <div>
+            {adminTab === 'DASHBOARD' && (
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'16px', marginBottom:'20px'}}>
+                <StatCard title="মোট অর্ডার" value={totalOrders} icon="📦" />
+                <StatCard title="মোট রাজস্ব" value={`৳${totalRevenue}`} icon="💰" />
+                <StatCard title="পণ্যের সংখ্যা" value={totalProducts} icon="🛍️" />
+                <StatCard title="স্টক ছাড়া" value={outOfStockProducts.length} icon="⚠️" color="#dc2626" />
+                <StatCard title="কম স্টক" value={lowStockProducts.length} icon="⏱️" color="#f59e0b" />
+              </div>
+            )}
+
+            {adminTab === 'ORDERS' && (
+              <div style={{background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                <h3 style={{marginBottom:'16px', color:'#065f46'}}>অর্ডার ব্যবস্থাপনা</h3>
+                <div style={{marginBottom:'16px', display:'flex', gap:'8px'}}>
+                  <button onClick={()=>setFilterStatus('all')} style={{padding:'8px 16px', background:filterStatus==='all'?'#059669':'#e0e0e0', color:filterStatus==='all'?'white':'#333', border:'none', borderRadius:'6px', cursor:'pointer'}}>সব</button>
+                  <button onClick={()=>setFilterStatus('recent')} style={{padding:'8px 16px', background:filterStatus==='recent'?'#059669':'#e0e0e0', color:filterStatus==='recent'?'white':'#333', border:'none', borderRadius:'6px', cursor:'pointer'}}>সম্প্রতি</button>
+                </div>
+                {orders.length === 0 ? (
+                  <p style={{color:'#666', padding:'20px', textAlign:'center'}}>এখনো কোনো অর্ডার নেই</p>
+                ) : (
+                  <div style={{overflowX:'auto'}}>
+                    <table style={{width:'100%', borderCollapse:'collapse', fontSize:'13px'}}>
+                      <thead>
+                        <tr style={{background:'#f3f4f6', borderBottom:'2px solid #059669'}}>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>অর্ডার ID</th>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>গ্রাহক</th>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>মোবাইল</th>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>পণ্যের সংখ্যা</th>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>মোট</th>
+                          <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>তারিখ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.map((o, idx) => (
+                          <tr key={o.id} style={{borderBottom:'1px solid #eee', background:idx%2===0?'#f9fafb':'white'}}>
+                            <td style={{padding:'12px'}}>{o.id.slice(0,8)}</td>
+                            <td style={{padding:'12px', fontWeight:'600'}}>{o.name}</td>
+                            <td style={{padding:'12px'}}>{o.phone}</td>
+                            <td style={{padding:'12px'}}>{o.items.length}</td>
+                            <td style={{padding:'12px', fontWeight:'700', color:'#059669'}}>৳{o.total}</td>
+                            <td style={{padding:'12px', fontSize:'11px'}}>{formatDate(o.date)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {adminTab === 'INVENTORY' && (
+              <div style={{background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                <h3 style={{marginBottom:'16px', color:'#065f46'}}>ইনভেন্টরি ম্যানেজমেন্ট</h3>
+                <div style={{marginBottom:'16px', display:'flex', gap:'8px', alignItems:'center'}}>
+                  <label>কম স্টক সীমা:</label>
+                  <input type="number" value={lowStockThreshold} onChange={e=>setLowStockThreshold(parseInt(e.target.value))} min="1" style={{padding:'6px 12px', borderRadius:'6px', border:'1px solid #e0e0e0', width:'80px'}} />
+                </div>
+                <div style={{overflowX:'auto'}}>
+                  <table style={{width:'100%', borderCollapse:'collapse', fontSize:'13px'}}>
+                    <thead>
+                      <tr style={{background:'#f3f4f6', borderBottom:'2px solid #059669'}}>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>পণ্যের নাম</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>ক্যাটাগরি</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>মূল্য</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>বর্তমান স্টক</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>ইউনিট</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>অবস্থা</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prods.map((p, idx) => (
+                        <tr key={p.id} style={{borderBottom:'1px solid #eee', background:idx%2===0?'#f9fafb':'white'}}>
+                          <td style={{padding:'12px', fontWeight:'600'}}>{p.n}</td>
+                          <td style={{padding:'12px'}}>{p.c}</td>
+                          <td style={{padding:'12px', fontWeight:'700'}}>৳{p.p}</td>
+                          <td style={{padding:'12px'}}>{p.stock}</td>
+                          <td style={{padding:'12px'}}>{p.u}</td>
+                          <td style={{padding:'12px'}}>
+                            <span style={{padding:'4px 12px', borderRadius:'20px', background:p.stock===0?'#fee2e2':p.stock<=lowStockThreshold?'#fef3c7':'#dcfce7', color:p.stock===0?'#dc2626':p.stock<=lowStockThreshold?'#b45309':'#15803d', fontSize:'12px', fontWeight:'700'}}>
+                              {p.stock===0?'স্টক শেষ':p.stock<=lowStockThreshold?'কম স্টক':'স্বাভাবিক'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {adminTab === 'STOCK' && (
+              <div style={{background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                <h3 style={{marginBottom:'20px', color:'#065f46'}}>স্টক ব্যবস্থাপনা</h3>
+                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:'16px'}}>
+                  {prods.map(p => (
+                    <div key={p.id} style={{padding:'16px', border:'2px solid #e0e0e0', borderRadius:'8px', background:p.stock===0?'#fee2e2':p.stock<=lowStockThreshold?'#fef3c7':'#f9fafb'}}>
+                      <h4 style={{margin:'0 0 12px 0', fontSize:'14px', fontWeight:'700'}}>{p.n}</h4>
+                      <p style={{margin:'0 0 8px 0', fontSize:'12px', color:'#666'}}>ক্যাটাগরি: {p.c}</p>
+                      <p style={{margin:'0 0 12px 0', fontSize:'12px', color:'#666'}}>মূল্য: ৳{p.p}</p>
+                      <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px'}}>
+                        <span style={{fontWeight:'700'}}>স্টক: {p.stock}</span>
+                        <div style={{flex:1, height:'8px', background:'#e0e0e0', borderRadius:'4px', position:'relative'}}>
+                          <div style={{height:'100%', background:p.stock===0?'#dc2626':p.stock<=lowStockThreshold?'#f59e0b':'#059669', width:`${Math.min((p.stock/100)*100, 100)}%`, borderRadius:'4px'}}></div>
+                        </div>
+                      </div>
+                      <div style={{display:'flex', gap:'8px'}}>
+                        <button onClick={() => updateProduct(p.id, {stock: Math.max(0, p.stock-10)})} style={{flex:1, padding:'8px', background:'#fee2e2', border:'none', borderRadius:'6px', cursor:'pointer', color:'#dc2626', fontWeight:'600', fontSize:'12px'}}>-10</button>
+                        <button onClick={() => updateProduct(p.id, {stock: Math.max(0, p.stock-1)})} style={{flex:1, padding:'8px', background:'#fee2e2', border:'none', borderRadius:'6px', cursor:'pointer', color:'#dc2626', fontWeight:'600', fontSize:'12px'}}>-1</button>
+                        <input type="number" value={p.stock} onChange={e=>updateProduct(p.id, {stock: parseInt(e.target.value)||0})} style={{flex:1, padding:'8px', borderRadius:'6px', border:'1px solid #e0e0e0', textAlign:'center', fontSize:'12px'}} />
+                        <button onClick={() => updateProduct(p.id, {stock: p.stock+1})} style={{flex:1, padding:'8px', background:'#dcfce7', border:'none', borderRadius:'6px', cursor:'pointer', color:'#15803d', fontWeight:'600', fontSize:'12px'}}>+1</button>
+                        <button onClick={() => updateProduct(p.id, {stock: p.stock+10})} style={{flex:1, padding:'8px', background:'#dcfce7', border:'none', borderRadius:'6px', cursor:'pointer', color:'#15803d', fontWeight:'600', fontSize:'12px'}}>+10</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {adminTab === 'PRODUCTS' && (
+              <div style={{background:'white', padding:'20px', borderRadius:'12px', boxShadow:'0 2px 8px rgba(0,0,0,.1)'}}>
+                <h3 style={{marginBottom:'20px', color:'#065f46'}}>পণ্য সম্পাদনা</h3>
+                <div style={{background:'#f3f4f6', padding:'16px', borderRadius:'8px', marginBottom:'20px'}}>
+                  <h4 style={{marginBottom:'12px', color:'#065f46'}}>নতুন পণ্য যোগ করুন</h4>
+                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:'12px', marginBottom:'12px'}}>
+                    <input type="text" placeholder="পণ্যের নাম" value={newProdForm.n} onChange={e=>setNewProdForm({...newProdForm, n:e.target.value})} style={{padding:'10px', borderRadius:'6px', border:'1px solid #e0e0e0', fontSize:'13px'}} />
+                    <input type="number" placeholder="মূল্য" value={newProdForm.p} onChange={e=>setNewProdForm({...newProdForm, p:e.target.value})} style={{padding:'10px', borderRadius:'6px', border:'1px solid #e0e0e0', fontSize:'13px'}} />
+                    <select value={newProdForm.c} onChange={e=>setNewProdForm({...newProdForm, c:e.target.value})} style={{padding:'10px', borderRadius:'6px', border:'1px solid #e0e0e0', fontSize:'13px'}}>
+                      <option>ক্যাটাগরি নির্বাচন করুন</option>
+                      <option>চাল</option>
+                      <option>তেল</option>
+                      <option>সবজি</option>
+                      <option>ফল</option>
+                      <option>নাস্তা</option>
+                      <option>পানীয়</option>
+                      <option>গৃহস্থালি</option>
+                      <option>ডাল</option>
+                    </select>
+                    <input type="number" placeholder="স্টক" value={newProdForm.stock} onChange={e=>setNewProdForm({...newProdForm, stock:e.target.value})} style={{padding:'10px', borderRadius:'6px', border:'1px solid #e0e0e0', fontSize:'13px'}} />
+                    <input type="text" placeholder="ইউনিট (কেজি/বোতল)" value={newProdForm.u} onChange={e=>setNewProdForm({...newProdForm, u:e.target.value})} style={{padding:'10px', borderRadius:'6px', border:'1px solid #e0e0e0', fontSize:'13px'}} />
+                  </div>
+                  <button onClick={addNewProduct} style={{width:'100%', padding:'10px', background:'#059669', color:'white', border:'none', borderRadius:'6px', fontWeight:'700', cursor:'pointer'}}>নতুন পণ্য যোগ করুন</button>
+                </div>
+
+                <div style={{overflowX:'auto'}}>
+                  <table style={{width:'100%', borderCollapse:'collapse', fontSize:'13px'}}>
+                    <thead>
+                      <tr style={{background:'#f3f4f6', borderBottom:'2px solid #059669'}}>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>পণ্য</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>ক্যাটাগরি</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>মূল্য</th>
+                        <th style={{padding:'12px', textAlign:'left', fontWeight:'700'}}>অ্যাকশন</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prods.map((p, idx) => (
+                        <tr key={p.id} style={{borderBottom:'1px solid #eee', background:idx%2===0?'#f9fafb':'white'}}>
+                          <td style={{padding:'12px', fontWeight:'600'}}>{p.n}</td>
+                          <td style={{padding:'12px'}}>{p.c}</td>
+                          <td style={{padding:'12px'}}>৳{p.p}</td>
+                          <td style={{padding:'12px'}}>
+                            <button onClick={()=>deleteProduct(p.id)} style={{padding:'6px 12px', background:'#fee2e2', border:'none', borderRadius:'4px', cursor:'pointer', color:'#dc2626', fontWeight:'600', fontSize:'12px'}}>মুছুন</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function AdminDashboardComponent() {
+      return null;
+          </main>
+
+          <footer style={{background:'white', padding:'20px', textAlign:'center', marginTop:'40px', color:'#666', borderTop:'1px solid #eee', fontSize:'12px'}}>
+            <p>© २०२५ সামসুল'স গ্রোসরি। সর্বাধিকার সংরক্ষিত।</p>
+            <p>📍 বদলগাছী, সিরাজগঞ্জ | 📞 +८८-००००००००० | ✉️ support@samsulgrocery.com</p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

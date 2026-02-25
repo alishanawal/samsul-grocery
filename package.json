@@ -1,1 +1,17 @@
-{"name":"samsul-grocery","version":"1.0.0","description":"An elegant, fully-featured online grocery store web application built with React","author":"Alisha Nawal","license":"MIT","scripts":{"start":"react-scripts start","build":"react-scripts build","test":"react-scripts test"},"dependencies":{"react":"18.2.0","react-dom":"18.2.0","react-scripts":"5.0.1"}}
+{
+  "name": "samsul-grocery",
+  "version": "1.0.0",
+  "description": "An elegant, fully-featured online grocery store web application built with React",
+  "author": "Alisha Nawal",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "build": "echo 'No build needed - static HTML app'",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
