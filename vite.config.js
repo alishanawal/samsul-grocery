@@ -5,8 +5,20 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    open: false,
     host: '0.0.0.0',
-    allowedHosts: ['all']
+    open: false,
+    allowedHosts: 'all',
+    middlewareMode: false,
+    httpOnly: false
+  },
+  preview: {
+    port: 3000,
+    host: '0.0.0.0',
+    open: false,
+    allowedHosts: 'all'
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false
   }
 })

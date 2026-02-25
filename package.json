@@ -6,10 +6,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open false",
     "build": "vite build",
-    "preview": "vite preview",
-    "start": "vite"
+    "preview": "vite preview --open false",
+    "start": "npm run dev"
   },
   "dependencies": {
     "react": "^18.2.0",
