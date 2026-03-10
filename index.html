@@ -3,33 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alisha Nawal - Digital Professional | Portfolio</title>
     <link rel="stylesheet" href="styles.css">
-    <title>Alishanawal's Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>Alishanawal</h1>
-        <nav>
-            <ul>
-                <li><a href="#projects">Projects</a></li>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">Alisha Nawal</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
                 <li><a href="#services">Services</a></li>
+                <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-        </nav>
-    </header>
-    
-    <section id="projects">
-        <h2>Project Details</h2>
-        <p>Details about various projects go here.</p>
-    </section>
-    
-    <section id="services">
-        <h2>Digital Marketing Services</h2>
-        <p>Details about the digital marketing services offered.</p>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Digital Solutions Expert</h1>
+                <p>Building innovative projects & expanding your online presence</p>
+                <a href="#contact" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
     </section>
 
-    <footer>
-        <p>Contact me at: <a href="mailto:alishanawal@example.com">alishanawal@example.com</a></p>
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>About Me</h2>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>Welcome! I'm a passionate developer and digital professional dedicated to creating exceptional online experiences. With expertise in full-stack development, e-commerce solutions, and digital marketing, I help businesses thrive in the digital landscape.</p>
+                    <p>My commitment is to deliver high-quality solutions that drive results and exceed expectations.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat">
+                        <h3>1+</h3>
+                        <p>Years Experience</p>
+                    </div>
+                    <div class="stat">
+                        <h3>10+</h3>
+                        <p>Projects Completed</p>
+                    </div>
+                    <div class="stat">
+                        <h3>100%</h3>
+                        <p>Client Satisfaction</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>Services I Offer</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>YouTube SEO & Video Editing</h3>
+                    <p>Optimize your video content for maximum reach and engagement with professional editing and SEO strategies.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Banner & Design Services</h3>
+                    <p>Create stunning visual content including banners, graphics, and branded materials that captivate your audience.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>E-Commerce Store Setup</h3>
+                    <p>Launch your Shopify store with complete setup, optimization, and integration for seamless online selling.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-instagram"></i>
+                    </div>
+                    <h3>Social Media Marketing</h3>
+                    <p>Build your Instagram presence and execute targeted marketing campaigns to grow your audience and sales.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email Marketing & Lead Generation</h3>
+                    <p>Create effective email campaigns and lead generation strategies to convert prospects into loyal customers.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-facebook"></i>
+                    </div>
+                    <h3>Facebook Ads Campaign</h3>
+                    <p>Design and manage targeted Facebook advertising campaigns that deliver measurable results and ROI.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2>Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Samsul Grocery</h3>
+                        <span class="tech-badge">React</span>
+                    </div>
+                    <p>Online Grocery Store App - A comprehensive e-commerce solution built with React featuring user-friendly interface, wide product range, shopping cart management, and secure payment gateway.</p>
+                    <div class="project-features">
+                        <span>User-Friendly Interface</span>
+                        <span>Product Catalog</span>
+                        <span>Shopping Cart</span>
+                        <span>Secure Payments</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/alishanawal/samsul-grocery" target="_blank" class="link-btn">
+                            <i class="fab fa-github"></i> View Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2>Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-group">
+                    <h3>Frontend Development</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">HTML5</span>
+                        <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">JavaScript</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <h3>Digital Marketing</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">YouTube SEO</span>
+                        <span class="skill-tag">Social Media</span>
+                        <span class="skill-tag">Email Marketing</span>
+                        <span class="skill-tag">Paid Ads</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <h3>E-Commerce & Tools</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Shopify</span>
+                        <span class="skill-tag">Video Editing</span>
+                        <span class="skill-tag">Graphic Design</span>
+                        <span class="skill-tag">Git/GitHub</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <p>+1-800-555-0199</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>support@samsulgrocery.com</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-github"></i>
+                        <div>
+                            <h3>GitHub</h3>
+                            <p><a href="https://github.com/alishanawal" target="_blank">@alishanawal</a></p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Alisha Nawal. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/alishanawal" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
